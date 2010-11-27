@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>PassManager</groupId>
+    <artifactId>PassManager</artifactId>
+    <packaging>pom</packaging>
+    
+    <version>1.0</version>
+    <modules>
+        <module>api</module>
+        <module>apt</module>
+        <module>UI</module>
+        <module>entity</module>
+        <module>launcher</module>
+    </modules>
+    <properties>
+        <maven.compiler.target>1.5</maven.compiler.target>
+        <maven.compiler.source>1.5</maven.compiler.source>
+    </properties>
+   <!--<dependencyManagement>
+       <dependencies>
+      <- modules dependencies 
+      <dependency>
+        <groupId>${groupId}</groupId>
+        <artifactId>api</artifactId>
+        <version>${version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${groupId}</groupId>
+        <artifactId>apt</artifactId>
+        <version>${version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${groupId}</groupId>
+        <artifactId>entity</artifactId>
+        <version>${version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${groupId}</groupId>
+        <artifactId>UI</artifactId>
+        <version>${version}</version>
+      </dependency>
+    </dependencies>
+   </dependencyManagement>-->
+</project>
