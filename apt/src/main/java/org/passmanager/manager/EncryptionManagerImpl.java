@@ -28,6 +28,7 @@ public class EncryptionManagerImpl  implements EncryptionManager {
    public EncryptionManagerImpl (String passwordKey){
        keyEncryptpionManager = new KeyEncryption(new StringBuilder( passwordKey));
        generateKey();
+       System.out.println("taktak");
    }
    private void generateKey() {
         try {
