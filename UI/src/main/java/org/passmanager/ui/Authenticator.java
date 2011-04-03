@@ -9,10 +9,10 @@ package org.passmanager.ui;
  */
 public class Authenticator {
 
-    public static boolean checkPass (char[] p ){
-    if(p.length == 8 && p[0] == 'a'){
-        return true;
-    }
-    throw new IllegalArgumentException("bad pass"); 
+    public static boolean checkPass(char[] p) {
+        if (p.length == 8 && p[0] == 'a') {
+            return true;
+        }
+        throw new IllegalArgumentException("bad pass");
     }
 }

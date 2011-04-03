@@ -7,7 +7,7 @@
     <groupId>PassManager</groupId>
     <artifactId>PassManager</artifactId>
     <packaging>pom</packaging>
-    
+
     <version>1.0</version>
     <modules>
         <module>api</module>
@@ -20,29 +20,29 @@
         <maven.compiler.target>1.5</maven.compiler.target>
         <maven.compiler.source>1.5</maven.compiler.source>
     </properties>
-   <!--<dependencyManagement>
-       <dependencies>
-      <- modules dependencies 
-      <dependency>
-        <groupId>${groupId}</groupId>
-        <artifactId>api</artifactId>
-        <version>${version}</version>
-      </dependency>
-      <dependency>
-        <groupId>${groupId}</groupId>
-        <artifactId>apt</artifactId>
-        <version>${version}</version>
-      </dependency>
-      <dependency>
-        <groupId>${groupId}</groupId>
-        <artifactId>entity</artifactId>
-        <version>${version}</version>
-      </dependency>
-      <dependency>
-        <groupId>${groupId}</groupId>
-        <artifactId>UI</artifactId>
-        <version>${version}</version>
-      </dependency>
-    </dependencies>
-   </dependencyManagement>-->
+    <!--<dependencyManagement>
+        <dependencies>
+       <- modules dependencies
+       <dependency>
+         <groupId>${groupId}</groupId>
+         <artifactId>api</artifactId>
+         <version>${version}</version>
+       </dependency>
+       <dependency>
+         <groupId>${groupId}</groupId>
+         <artifactId>apt</artifactId>
+         <version>${version}</version>
+       </dependency>
+       <dependency>
+         <groupId>${groupId}</groupId>
+         <artifactId>entity</artifactId>
+         <version>${version}</version>
+       </dependency>
+       <dependency>
+         <groupId>${groupId}</groupId>
+         <artifactId>UI</artifactId>
+         <version>${version}</version>
+       </dependency>
+     </dependencies>
+    </dependencyManagement>-->
 </project>

@@ -15,33 +15,35 @@
     <build>
         <plugins>
             <plugin>
-                
-               <artifactId>maven-assembly-plugin</artifactId>
+
+                <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.2</version>
-                
+
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
 
                     <archive>
-                        
+
                         <manifest>
                             <packageName>org.passManager</packageName>
-                            
+
                             <mainClass>org.passManager.Launcher</mainClass>
                         </manifest>
                     </archive>
 
-                 
 
                 </configuration>
                 <executions>
-                   <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- append to the packaging phase. -->
+                    <execution>
+                        <id>make-assembly</id>
+                        <!-- this is used for inheritance merges -->
+                        <phase>package</phase>
+                        <!-- append to the packaging phase. -->
                         <goals>
-                          <goal>single</goal> <!-- goals == mojos -->
+                            <goal>single</goal>
+                            <!-- goals == mojos -->
                         </goals>
                     </execution>
                 </executions>

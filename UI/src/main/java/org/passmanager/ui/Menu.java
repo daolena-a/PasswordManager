@@ -8,7 +8,7 @@ package org.passmanager.ui;
  * To change this template use File | Settings | File Templates.
  */
 public class Menu {
-    public void displayMenu (){
+    public void displayMenu() {
         System.out.println("");
     }
 }

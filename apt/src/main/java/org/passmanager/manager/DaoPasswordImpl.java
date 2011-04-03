@@ -3,6 +3,7 @@ package org.passmanager.manager;
 import objects.EncryptedPasswordLogin;
 import objects.PasswordLogin;
 import org.passmanager.interfaces.DaoPasswords;
+import org.passmanager.interfaces.EncryptionException;
 import org.passmanager.interfaces.EncryptionManager;
 
 
@@ -21,27 +22,44 @@ import java.util.Map;
  */
 public class DaoPasswordImpl implements DaoPasswords {
     Map<String, EncryptedPasswordLogin> db;
-    EncryptionManager em ;
-    public DaoPasswordImpl (){
-        em = (EncryptionManager) new EncryptionManagerImpl();
+    EncryptionManager em;
+
+    public DaoPasswordImpl(String password) {
+        em = (EncryptionManager) new EncryptionManagerImpl(password);
         setDb();
     }
-    public void savePassword(PasswordLogin pl) {
-        //To change body of implemented methods use File | Settings | File Templates.
 
-        byte[] encryptedPassword = em.rsaEncrypt(pl.getPassword().getBytes());
-        byte[] encryptedLogin = em.rsaEncrypt(pl.getLogin().getBytes());
-        db.put(pl.getLabel(), new EncryptedPasswordLogin(encryptedLogin,encryptedPassword));
-        System.out.println ("going to be written :"+pl.getLabel() + new String(encryptedLogin) +" \n"+new String (encryptedPassword));
+    public void removeLoginPassword(PasswordLogin pl) {
+        db.remove(pl.getLabel());
         saveDb();
+    }
+
+    public void savePassword(PasswordLogin pl) {
+        byte[] encryptedPassword = new byte[0];
+        try {
+            encryptedPassword = em.rsaEncrypt(pl.getPassword().getBytes());
+
+            byte[] encryptedLogin = em.rsaEncrypt(pl.getLogin().getBytes());
+            db.put(pl.getLabel(), new EncryptedPasswordLogin(encryptedLogin, encryptedPassword));
+            saveDb();
+        } catch (EncryptionException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
 
     }
 
-    public PasswordLogin  getLoginPassword(String label) {
-        String log = new String (em.rsaDecrypt(db.get(label).getLogin()));
-        String pass = new String(em.rsaDecrypt(db.get(label).getPassword()));
+    public PasswordLogin getLoginPassword(String label) {
+        String log = null;
+        try {
+            log = new String(em.rsaDecrypt(db.get(label).getLogin()));
 
-        return new PasswordLogin(log,pass,label);  //To change body of implemented methods use File | Settings | File Templates.
+            String pass = new String(em.rsaDecrypt(db.get(label).getPassword()));
+            return new PasswordLogin(log, pass, label);
+        } catch (EncryptionException e) {
+            e.printStackTrace();
+        }
+        return null; //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public List<PasswordLogin> getAllPassword() {
@@ -49,76 +67,77 @@ public class DaoPasswordImpl implements DaoPasswords {
         List<PasswordLogin> result = new ArrayList();
 
 
-        if (db != null){
-            for (Map.Entry<String,EncryptedPasswordLogin> entry :db.entrySet()){
-                result.add(new PasswordLogin(
-                                new String (em.rsaDecrypt(entry.getValue().getLogin())),
-                                new String (em.rsaDecrypt(entry.getValue().getPassword())),
-                                entry.getKey())
-                        );
+        if (db != null) {
+            for (Map.Entry<String, EncryptedPasswordLogin> entry : db.entrySet()) {
+                try {
+                    result.add(new PasswordLogin(
+                            new String(em.rsaDecrypt(entry.getValue().getLogin())),
+                            new String(em.rsaDecrypt(entry.getValue().getPassword())),
+                            entry.getKey())
+                    );
+                } catch (EncryptionException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        //To change body of implemented methods use File | Settings | File Templates.
         return result;
     }
-    private void setDb(){
-        FileInputStream  fis = null;
+
+    private void setDb() {
+        FileInputStream fis = null;
         File data = null;
         try {
-            data = new File("/home/adrien/Desktop/db.data");
-            if (!data.exists()){
+            data = new File("db.data");
+            if (!data.exists()) {
                 data.createNewFile();
-                db = new HashMap<String,EncryptedPasswordLogin>();
+                db = new HashMap<String, EncryptedPasswordLogin>();
                 return;
             }
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
-        synchronized (this){
-            try{
-                if (data.length()<1){
-                    db = new HashMap<String,EncryptedPasswordLogin>();
+        synchronized (this) {
+            try {
+                if (data.length() < 1) {
+                    db = new HashMap<String, EncryptedPasswordLogin>();
                     return;
                 }
-                if (data == null){
+                if (data == null) {
                     throw new IllegalArgumentException("Problème dans la création de la base de donnée");
                 }
                 fis = new FileInputStream(data);
                 ObjectInputStream ois = new ObjectInputStream(fis);
-                Map<String,EncryptedPasswordLogin> tempdbObject = null; 
-               if ((tempdbObject =  (Map <String,EncryptedPasswordLogin>) ois.readObject()) != null){
-                   db = tempdbObject;
+                Map<String, EncryptedPasswordLogin> tempdbObject = null;
+                if ((tempdbObject = (Map<String, EncryptedPasswordLogin>) ois.readObject()) != null) {
+                    db = tempdbObject;
 
 
-                }
-
-                else {
-                   db = new HashMap<String,EncryptedPasswordLogin>();
-                   return;
+                } else {
+                    db = new HashMap<String, EncryptedPasswordLogin>();
+                    return;
                 }
                 System.out.println("Lu");
                 fis.close();
                 ois.close();
 
-            }catch (FileNotFoundException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
         }
     }
 
-    private void saveDb (){
+    private void saveDb() {
 
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
-            synchronized (this){
-                fos = new FileOutputStream("/home/adrien/Desktop/db.data");
+            synchronized (this) {
+                fos = new FileOutputStream("db.data");
                 oos = new ObjectOutputStream(fos);
                 oos.writeObject(db);
                 oos.flush();

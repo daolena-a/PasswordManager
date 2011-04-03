@@ -13,6 +13,10 @@ import java.util.List;
  */
 public interface DaoPasswords {
     public void savePassword(PasswordLogin pl);
-    public PasswordLogin  getLoginPassword(String label) ;
+
+    public PasswordLogin getLoginPassword(String label);
+
     public List<PasswordLogin> getAllPassword();
+
+    public void removeLoginPassword(PasswordLogin pl);
 }

@@ -9,18 +9,21 @@ import java.io.Serializable;
  * Time: 10:32:57 PM
  * To change this template use File | Settings | File Templates.
  */
-public class EncryptedPasswordLogin implements Serializable{
+public class EncryptedPasswordLogin implements Serializable {
     byte[] login;
-    byte[]password;
-    public EncryptedPasswordLogin (byte[] log , byte[] pass){
+    byte[] password;
+
+    public EncryptedPasswordLogin(byte[] log, byte[] pass) {
         login = log;
         password = pass;
     }
-    public byte[] getLogin(){
+
+    public byte[] getLogin() {
         return login;
 
     }
-    public byte[] getPassword(){
+
+    public byte[] getPassword() {
         return password;
     }
 }

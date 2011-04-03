@@ -6,6 +6,7 @@ import javax.crypto.spec.*;
 import java.security.Key;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
 /**
  * Created by IntelliJ IDEA.
  * User: adrien
@@ -13,52 +14,51 @@ import javax.crypto.spec.SecretKeySpec;
  * Time: 11:17:49 AM
  * To change this template use File | Settings | File Templates.
  */
-public final class  KeyEncryption {
+public final class KeyEncryption {
     // private String algo;
     String password;
     Key clef;
-    public  KeyEncryption ( final StringBuilder pass) {
+
+    public KeyEncryption(final StringBuilder pass) {
 
         password = pass.toString();
-        try{
-            clef = new SecretKeySpec(password.getBytes("UTF-8"),"Blowfish");
-        }
-        catch (Exception E){
-            E.printStackTrace();
+        try {
+            clef = new SecretKeySpec(password.getBytes("UTF-8"), "Blowfish");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    public byte[] crypter(final String acrypt) {
+
+    public byte[] crypter(final byte[] acrypt) {
 
 
         try {
 
             //set information we need before crypt the string
-            Cipher cipher=Cipher.getInstance("Blowfish");
-            cipher.init(Cipher.ENCRYPT_MODE,clef);
+            Cipher cipher = Cipher.getInstance("Blowfish");
+            cipher.init(Cipher.ENCRYPT_MODE, clef);
             //crypt
-            return cipher.doFinal(acrypt.getBytes());
+            return cipher.doFinal(acrypt);
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
 
 
     }
 
-    public String decrypter(final byte[] aDecrypt) {
+    public byte[] decrypter(final byte[] aDecrypt) {
         try {
             //set information before crypt
-            Cipher cipher=Cipher.getInstance("Blowfish");
-            cipher.init(Cipher.DECRYPT_MODE,clef);
+            Cipher cipher = Cipher.getInstance("Blowfish");
+            cipher.init(Cipher.DECRYPT_MODE, clef);
             //decrypt
             byte[] temp = cipher.doFinal(aDecrypt);
             //create a string to store the string get by decryption
-            String res = new String (temp);
-            return res;
+            // String res = new String (temp);
+            return temp;
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Erreur lors du décryptage des donnees");
             e.printStackTrace();
             return null;

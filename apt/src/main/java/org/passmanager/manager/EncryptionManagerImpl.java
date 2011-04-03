@@ -1,5 +1,6 @@
 package org.passmanager.manager;
 
+import org.passmanager.interfaces.EncryptionException;
 import org.passmanager.interfaces.EncryptionManager;
 
 import javax.crypto.Cipher;
@@ -23,44 +24,49 @@ import java.security.spec.X509EncodedKeySpec;
  * Time: 10:26:54 PM
  * To change this template use File | Settings | File Templates.
  */
-public class EncryptionManagerImpl  implements EncryptionManager {
-    KeyEncryption keyEncryptpionManager ;
-   public EncryptionManagerImpl (String passwordKey){
-       keyEncryptpionManager = new KeyEncryption(new StringBuilder( passwordKey));
-       generateKey();
-       System.out.println("taktak");
-   }
-   private void generateKey() {
+public class EncryptionManagerImpl implements EncryptionManager {
+    KeyEncryption keyEncryptpionManager;
+
+    public EncryptionManagerImpl(String passwordKey) {
+        keyEncryptpionManager = new KeyEncryption(new StringBuilder(passwordKey));
+        generateKey();
+
+    }
+
+    private void generateKey() {
         try {
-             File keyPrev = new File("key.prv");
+            File keyPrev = new File("key.prv");
             File keyPub = new File("key.pub");
-             if (!keyPrev.exists() && !keyPub.exists()){
-            if (!keyPrev.exists()){
-                keyPrev.createNewFile();
-            } if (!keyPub.exists()){
-                keyPrev.createNewFile(); 
+            if (!keyPrev.exists() && !keyPub.exists()) {
+                if (!keyPrev.exists()) {
+                    keyPrev.createNewFile();
+                }
+                if (!keyPub.exists()) {
+                    keyPrev.createNewFile();
+                }
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+                kpg.initialize(2048, new SecureRandom());
+                System.out.println("kpg initialize");
+                KeyPair keys = kpg.generateKeyPair();
+                System.out.println("keys genereted");
+                RSAPrivateKey privateK = (RSAPrivateKey) keys.getPrivate();
+                RSAPublicKey publicK = (RSAPublicKey) keys.getPublic();
+
+
+                System.out.println("Writing them into files...");
+                FileOutputStream fpriv = new FileOutputStream("key.prv");
+                System.out.println(new String(privateK.getEncoded()));
+
+                System.out.println(new String(keyEncryptpionManager.crypter(privateK.getEncoded())));
+                fpriv.write(keyEncryptpionManager.crypter(privateK.getEncoded()));
+                fpriv.close();
+                System.out.println("private key written");
+                FileOutputStream fpub = new FileOutputStream("key.pub");
+                fpub.write(keyEncryptpionManager.crypter(publicK.getEncoded()));
+                fpub.close();
+                System.out.println("public key written");
+
             }
-            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-            kpg.initialize(2048, new SecureRandom());
-            System.out.println("kpg initialize");
-            KeyPair keys = kpg.generateKeyPair();
-            System.out.println("keys genereted");
-            RSAPrivateKey privateK = (RSAPrivateKey) keys.getPrivate();
-            RSAPublicKey publicK = (RSAPublicKey) keys.getPublic();
-
-
-
-             System.out.println("Writing them into files...");
-            FileOutputStream fpriv = new FileOutputStream("key.prv");
-            fpriv.write(privateK.getEncoded());
-            fpriv.close();
-            System.out.println("private key written");
-            FileOutputStream fpub = new FileOutputStream("key.pub");
-            fpub.write(publicK.getEncoded());
-            fpub.close();
-            System.out.println("public key written");
-
-             }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,7 +74,7 @@ public class EncryptionManagerImpl  implements EncryptionManager {
 
     }
 
-    private RSAPublicKey getKey() {
+    private RSAPublicKey getKey() throws EncryptionException {
         FileInputStream pubfile = null;
         RSAPublicKey pubkey = null;
         try {
@@ -76,6 +82,7 @@ public class EncryptionManagerImpl  implements EncryptionManager {
             pubfile = new FileInputStream("key.pub");
             byte[] byte_pub = new byte[pubfile.available()];
             pubfile.read(byte_pub);
+            byte_pub = keyEncryptpionManager.decrypter(byte_pub);
             X509EncodedKeySpec pubspec = new X509EncodedKeySpec(byte_pub);
             pubkey = (RSAPublicKey) factory.generatePublic(pubspec);
 
@@ -93,14 +100,19 @@ public class EncryptionManagerImpl  implements EncryptionManager {
         return pubkey;
 
     }
-     private RSAPrivateKey getKeyPrivate() {
+
+    private RSAPrivateKey getKeyPrivate() throws EncryptionException {
         FileInputStream prvfile = null;
         RSAPrivateKey prvkey = null;
         try {
             KeyFactory factory = KeyFactory.getInstance("RSA");
+            if (new File("key.prv").exists() == false) {
+                throw new EncryptionException();
+            }
             prvfile = new FileInputStream("key.prv");
             byte[] byte_prv = new byte[prvfile.available()];
             prvfile.read(byte_prv);
+            byte_prv = keyEncryptpionManager.decrypter(byte_prv);
             PKCS8EncodedKeySpec prvspec = new PKCS8EncodedKeySpec(byte_prv);
             prvkey = (RSAPrivateKey) factory.generatePrivate(prvspec);
 
@@ -119,13 +131,13 @@ public class EncryptionManagerImpl  implements EncryptionManager {
 
     }
 
-    public byte[] rsaEncrypt(byte[] data) {
+    public byte[] rsaEncrypt(byte[] data) throws EncryptionException {
         RSAPublicKey publicKey = getKey();
         byte[] cipherData = null;
         try {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-             cipherData = cipher.doFinal(data);
+            cipherData = cipher.doFinal(data);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -133,13 +145,15 @@ public class EncryptionManagerImpl  implements EncryptionManager {
         return cipherData;
 
     }
-        public byte[] rsaDecrypt(byte[] data) {
+
+    public byte[] rsaDecrypt(byte[] data) throws EncryptionException {
         RSAPrivateKey privateKey = getKeyPrivate();
+
         byte[] cipherData = null;
         try {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
-             cipherData = cipher.doFinal(data);
+            cipherData = cipher.doFinal(data);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -147,5 +161,5 @@ public class EncryptionManagerImpl  implements EncryptionManager {
         return cipherData;
 
     }
-      
+
 }

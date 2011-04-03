@@ -8,6 +8,7 @@ package org.passmanager.interfaces;
  * To change this template use File | Settings | File Templates.
  */
 public interface EncryptionManager {
-     public byte[] rsaEncrypt(byte[] data) ;
-     public byte[] rsaDecrypt(byte[] data);
+    public byte[] rsaEncrypt(byte[] data) throws EncryptionException;
+
+    public byte[] rsaDecrypt(byte[] data) throws EncryptionException;
 }
