@@ -38,12 +38,11 @@ public class DaoPasswordImpl implements DaoPasswords {
         byte[] encryptedPassword = new byte[0];
         try {
             encryptedPassword = em.rsaEncrypt(pl.getPassword().getBytes());
-
             byte[] encryptedLogin = em.rsaEncrypt(pl.getLogin().getBytes());
             db.put(pl.getLabel(), new EncryptedPasswordLogin(encryptedLogin, encryptedPassword));
             saveDb();
         } catch (EncryptionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
 
@@ -59,14 +58,11 @@ public class DaoPasswordImpl implements DaoPasswords {
         } catch (EncryptionException e) {
             e.printStackTrace();
         }
-        return null; //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     public List<PasswordLogin> getAllPassword() {
-        //for (PasswordLogin pl : bd.)
         List<PasswordLogin> result = new ArrayList();
-
-
         if (db != null) {
             for (Map.Entry<String, EncryptedPasswordLogin> entry : db.entrySet()) {
                 try {
@@ -103,7 +99,7 @@ public class DaoPasswordImpl implements DaoPasswords {
                     return;
                 }
                 if (data == null) {
-                    throw new IllegalArgumentException("Problème dans la création de la base de donnée");
+                    throw new IllegalArgumentException();
                 }
                 fis = new FileInputStream(data);
                 ObjectInputStream ois = new ObjectInputStream(fis);
@@ -116,7 +112,7 @@ public class DaoPasswordImpl implements DaoPasswords {
                     db = new HashMap<String, EncryptedPasswordLogin>();
                     return;
                 }
-                System.out.println("Lu");
+                System.out.println("Read");
                 fis.close();
                 ois.close();
 
@@ -141,7 +137,7 @@ public class DaoPasswordImpl implements DaoPasswords {
                 oos = new ObjectOutputStream(fos);
                 oos.writeObject(db);
                 oos.flush();
-                System.out.println("Ecrit");
+                System.out.println("Written");
             }
 
         } catch (IOException e) {

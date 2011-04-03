@@ -18,15 +18,11 @@ import java.util.Scanner;
 public class Launcher {
     public static void main(String[] args) {
         System.out.println("MENU");
-
         Scanner sc = new Scanner(System.in);
-        //String passs = sc.next();
         Console c = System.console();
         char[] pass = c.readPassword();
         String passs = new String(pass);
-        //char[] pass = passs.toCharArray();
-
-        System.out.println("##Menu##");
+        System.out.println("############## Menu ##############");
         System.out.println("1) new log");
         System.out.println("2) show all");
         System.out.println("3) update");
@@ -40,8 +36,6 @@ public class Launcher {
                 System.out.println("log? ");
                 String log2save = sc.next();
                 System.out.println("pass? ");
-                //String  password2save = sc.next();
-
                 char[] pass2save = c.readPassword();
                 String password2save = new String(pass2save);
                 dp.savePassword(new PasswordLogin(log2save, password2save, label2save));
@@ -63,10 +57,8 @@ public class Launcher {
                 PasswordLogin pl = allPass.get(countEntry);
                 boolean valueOk = false;
                 do {
-
                     System.out.println("log? ");
                     String log2update = sc.next();
-
                     System.out.println("pass? ");
                     char[] pass2update = c.readPassword();
                     if (log2update != null && log2update.length() > 0 && pass2update != null && pass2update.length > 0) {
@@ -91,11 +83,6 @@ public class Launcher {
                 dp.removeLoginPassword(pl2remove);
 
         }
-
-
         sc.close();
-        //org.passmanager.ui.Authenticator.checkPass(pass);
-
-
     }
 }

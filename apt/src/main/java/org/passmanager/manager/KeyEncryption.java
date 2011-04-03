@@ -15,7 +15,6 @@ import javax.crypto.spec.SecretKeySpec;
  * To change this template use File | Settings | File Templates.
  */
 public final class KeyEncryption {
-    // private String algo;
     String password;
     Key clef;
 
@@ -30,36 +29,24 @@ public final class KeyEncryption {
     }
 
     public byte[] crypter(final byte[] acrypt) {
-
-
         try {
-
-            //set information we need before crypt the string
             Cipher cipher = Cipher.getInstance("Blowfish");
             cipher.init(Cipher.ENCRYPT_MODE, clef);
-            //crypt
             return cipher.doFinal(acrypt);
-
         } catch (Exception e) {
             return null;
         }
-
-
     }
 
     public byte[] decrypter(final byte[] aDecrypt) {
         try {
-            //set information before crypt
             Cipher cipher = Cipher.getInstance("Blowfish");
             cipher.init(Cipher.DECRYPT_MODE, clef);
-            //decrypt
             byte[] temp = cipher.doFinal(aDecrypt);
-            //create a string to store the string get by decryption
-            // String res = new String (temp);
             return temp;
 
         } catch (Exception e) {
-            System.out.println("Erreur lors du décryptage des donnees");
+            System.out.println("Error during decryption");
             e.printStackTrace();
             return null;
         }
